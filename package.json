@@ -1,0 +1,26 @@
+{
+  "name": "trackr-attendance-core",
+  "version": "0.0.1",
+  "description": "Trackr is an automated class attendance application.",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest",
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/trackr-attendance/core.git"
+  },
+  "keywords": [
+    "attendance"
+  ],
+  "author": "@aramael, @aptmoniker",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/trackr-attendance/core/issues"
+  },
+  "homepage": "https://github.com/trackr-attendance/core#readme",
+  "devDependencies": {
+    "jest": "^21.2.1"
+  }
+}
