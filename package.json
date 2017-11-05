@@ -22,5 +22,8 @@
   "homepage": "https://github.com/trackr-attendance/core#readme",
   "devDependencies": {
     "jest": "^21.2.1"
+  },
+  "dependencies": {
+    "easyimage": "^2.1.0"
   }
 }
