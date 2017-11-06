@@ -21,7 +21,7 @@ test('simple crop box in bottom center', () => {
 });
 
 describe('get face crop arguments', () => {
-	test('face crop arguments', () => {
+	test('face crop arguments with defaults', () => {
 		expect.assertions(1);
 		return easyimg.info('faceIsolationTest.png').then(function (image){
 			var face = require('./faceIsolationTestFaces.json')[0];
@@ -30,6 +30,54 @@ describe('get face crop arguments', () => {
 				dst: './output/01.png',
 				cropwidth: 20,
 				cropheight: 20,
+				gravity: 'NorthWest',
+				x: 0,
+				y: 0
+			});
+		});
+	});
+
+	test('face crop arguments with explicit output directory', () => {
+		expect.assertions(1);
+		return easyimg.info('faceIsolationTest.png').then(function (image){
+			var face = require('./faceIsolationTestFaces.json')[0];
+			expect(faceIsolation.getFaceCropArguments(image, face, './testOutputDirectory')).toEqual({
+				src: 'faceIsolationTest.png',
+				dst: './testOutputDirectory/01.png',
+				cropwidth: 20,
+				cropheight: 20,
+				gravity: 'NorthWest',
+				x: 0,
+				y: 0
+			});
+		});
+	});
+
+	test('face crop arguments with explicit scale factor', () => {
+		expect.assertions(1);
+		return easyimg.info('faceIsolationTest.png').then(function (image){
+			var face = require('./faceIsolationTestFaces.json')[0];
+			expect(faceIsolation.getFaceCropArguments(image, face, null, 3)).toEqual({
+				src: 'faceIsolationTest.png',
+				dst: './output/01.png',
+				cropwidth: 25,
+				cropheight: 25,
+				gravity: 'NorthWest',
+				x: 0,
+				y: 0
+			});
+		});
+	});
+
+	test('face crop arguments with explicit output directory and scale factor', () => {
+		expect.assertions(1);
+		return easyimg.info('faceIsolationTest.png').then(function (image){
+			var face = require('./faceIsolationTestFaces.json')[0];
+			expect(faceIsolation.getFaceCropArguments(image, face, './testOutputDirectory', 3)).toEqual({
+				src: 'faceIsolationTest.png',
+				dst: './testOutputDirectory/01.png',
+				cropwidth: 25,
+				cropheight: 25,
 				gravity: 'NorthWest',
 				x: 0,
 				y: 0

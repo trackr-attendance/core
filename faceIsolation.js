@@ -46,13 +46,18 @@ exports.getFaceCropBox = function (imageWidth, imageHeight, x, y, faceWidth,
   };
 }
 
-exports.getFaceCropArguments = function (image, face){
+exports.getFaceCropArguments = function (image, face, outputDirectory, scaleFactor){
+
+  // Set Defaults
+  outputDirectory = outputDirectory || './output';
+  scaleFactor = scaleFactor || 2;
+
   var cropBox = exports.getFaceCropBox(image.width, image.height,
     face.faceRectangle.left, face.faceRectangle.top, face.faceRectangle.width,
-    face.faceRectangle.height, 2);
+    face.faceRectangle.height, scaleFactor);
   return {
     src: image.path,
-    dst: './output/' + face.faceId + '.' + image.type,
+    dst: outputDirectory + '/' + face.faceId + '.' + image.type,
     cropwidth: cropBox.width,
     cropheight: cropBox.height,
     gravity: 'NorthWest',
