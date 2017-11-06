@@ -66,10 +66,10 @@ exports.getFaceCropArguments = function (image, face, outputDirectory, scaleFact
   };
 }
 
-exports.generateIndividualFacePhotos = function(photo, faces){
+exports.generateIndividualFacePhotos = function(photo, faces, outputDirectory, scaleFactor){
   return easyimg.info(photo).then(function (image){
     return Q.all(faces.map(function(face){
-      return easyimg.crop(exports.getFaceCropArguments(image, face))
+      return easyimg.crop(exports.getFaceCropArguments(image, face, outputDirectory, scaleFactor))
       .then(function (image){
         return {faceId: face.faceId,
           name: image.name,
