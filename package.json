@@ -21,9 +21,11 @@
   },
   "homepage": "https://github.com/trackr-attendance/core#readme",
   "devDependencies": {
+    "fs-extra": "^4.0.2",
     "jest": "^21.2.1"
   },
   "dependencies": {
-    "easyimage": "^2.1.0"
+    "easyimage": "^2.1.0",
+    "q": "^1.5.1"
   }
 }

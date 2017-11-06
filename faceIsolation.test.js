@@ -1,4 +1,7 @@
 const faceIsolation = require('./faceIsolation');
+var fs = require('fs-extra');
+
+var outputDir = './output';
 
 test('simple crop box in center', () => {
 	expect(faceIsolation.getFaceCropBox(100, 100, 45, 45, 10, 10, 2)).toEqual({width:20, height:20, x: 40, y: 40});
@@ -14,4 +17,23 @@ test('simple crop box in top center', () => {
 });
 test('simple crop box in bottom center', () => {
 	expect(faceIsolation.getFaceCropBox(100, 100, 45, 0, 10, 10, 2)).toEqual({width:20, height:15, x: 40, y: 0});
+});
+
+describe('face isolation test', () => {
+	beforeEach(() => {
+		// Create Output Directory
+		if (!fs.existsSync(outputDir)) fs.mkdirSync(outputDir);
+	});
+
+	afterEach(() => {
+		// Delete Generated Photos
+		if (fs.existsSync(outputDir)) fs.removeSync(outputDir);
+	});
+
+	test('generate individual face photos', () => {
+		expect.assertions(1);
+		return faceIsolation.generateIndividualFacePhotos('faceIsolationTest.png', require('./faceIsolationTestFaces.json')).then(function(data){
+			expect(data).toEqual(require('./faceIsolationTestFacesResult.json'));
+		});
+	});
 });

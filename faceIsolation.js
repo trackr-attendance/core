@@ -1,4 +1,8 @@
-exports.getFaceCropBox = function (imageWidth, imageHeight, x, y, faceWidth, faceHeight, scaleFactor){
+var Q = require('q')
+var easyimg = require('easyimage');
+
+exports.getFaceCropBox = function (imageWidth, imageHeight, x, y, faceWidth,
+  faceHeight, scaleFactor){
 
   // Transform X,Y to center of face
   x = x + Math.round(faceWidth/2);
@@ -40,4 +44,35 @@ exports.getFaceCropBox = function (imageWidth, imageHeight, x, y, faceWidth, fac
     "x": x,
     "y": y
   };
+}
+
+exports.getFaceCropArguments = function (image, face){
+  var cropBox = exports.getFaceCropBox(image.width, image.height,
+    face.faceRectangle.left, face.faceRectangle.top, face.faceRectangle.width,
+    face.faceRectangle.height, 2);
+  return {
+    dst: './output/' + face.faceId + '.jpg',
+    src: image.path,
+    cropwidth: cropBox.width,
+    cropheight: cropBox.height,
+    gravity: 'NorthWest',
+    x: cropBox.x,
+    y: cropBox.y
+  };
+}
+
+exports.generateIndividualFacePhotos = function(photo, faces){
+  return easyimg.info(photo).then(function (image){
+    return Q.all(faces.map(function(face){
+      return easyimg.crop(exports.getFaceCropArguments(image, face))
+      .then(function (image){
+        return {faceId: face.faceId,
+          name: image.name,
+          path: image.path,
+          width:image.width,
+          height:image.height
+        };
+      })
+    }));
+  });
 }
