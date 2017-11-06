@@ -51,8 +51,8 @@ exports.getFaceCropArguments = function (image, face){
     face.faceRectangle.left, face.faceRectangle.top, face.faceRectangle.width,
     face.faceRectangle.height, 2);
   return {
-    dst: './output/' + face.faceId + '.jpg',
     src: image.path,
+    dst: './output/' + face.faceId + '.' + image.type,
     cropwidth: cropBox.width,
     cropheight: cropBox.height,
     gravity: 'NorthWest',
