@@ -1,5 +1,6 @@
 const faceIsolation = require('./faceIsolation');
 var fs = require('fs-extra');
+var easyimg = require('easyimage');
 
 var outputDir = './output';
 
@@ -17,6 +18,24 @@ test('simple crop box in top center', () => {
 });
 test('simple crop box in bottom center', () => {
 	expect(faceIsolation.getFaceCropBox(100, 100, 45, 0, 10, 10, 2)).toEqual({width:20, height:15, x: 40, y: 0});
+});
+
+describe('get face crop arguments', () => {
+	test('face crop arguments', () => {
+		expect.assertions(1);
+		return easyimg.info('faceIsolationTest.png').then(function (image){
+			var face = require('./faceIsolationTestFaces.json')[0];
+			expect(faceIsolation.getFaceCropArguments(image, face)).toEqual({
+				src: 'faceIsolationTest.png',
+				dst: './output/01.png',
+				cropwidth: 20,
+				cropheight: 20,
+				gravity: 'NorthWest',
+				x: 0,
+				y: 0
+			});
+		});
+	});
 });
 
 describe('face isolation test', () => {
