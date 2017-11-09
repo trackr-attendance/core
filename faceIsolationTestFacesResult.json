@@ -1,0 +1,63 @@
+[{
+  "faceId": "01",
+  "name": "01.png",
+  "path": "./output/01.png",
+  "width": 20,
+  "height": 20
+},
+{
+  "faceId": "02",
+  "name": "02.png",
+  "path": "./output/02.png",
+  "width": 20,
+  "height": 20
+},
+{
+  "faceId": "03",
+  "name": "03.png",
+  "path": "./output/03.png",
+  "width": 20,
+  "height": 20
+},
+{
+  "faceId": "04",
+  "name": "04.png",
+  "path": "./output/04.png",
+  "width": 20,
+  "height": 20
+},
+{
+  "faceId": "05",
+  "name": "05.png",
+  "path": "./output/05.png",
+  "width": 20,
+  "height": 20
+},
+{
+  "faceId": "06",
+  "name": "06.png",
+  "path": "./output/06.png",
+  "width": 20,
+  "height": 20
+},
+{
+  "faceId": "07",
+  "name": "07.png",
+  "path": "./output/07.png",
+  "width": 20,
+  "height": 20
+},
+{
+  "faceId": "08",
+  "name": "08.png",
+  "path": "./output/08.png",
+  "width": 20,
+  "height": 20
+},
+{
+  "faceId": "09",
+  "name": "09.png",
+  "path": "./output/09.png",
+  "width": 20,
+  "height": 20
+}]

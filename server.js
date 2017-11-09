@@ -1,8 +1,13 @@
 var upload = require('./upload');
 var faces = require('./faces');
+var faceIsolation = require('./faceIsolation');
 
-upload.uploadFile('test001.jpg').then(function (photo){
+var file = 'test001.jpg';
+
+upload.uploadFile(file).then(function (photo){
 	faces.find(photo.Location).then(function (faces){
-		console.log(faces);
+		faceIsolation.generateIndividualFacePhotos(file, faces).then(function(value){
+			console.log(value);
+		});
 	});
 });

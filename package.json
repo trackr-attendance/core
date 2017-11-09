@@ -21,11 +21,13 @@
   },
   "homepage": "https://github.com/trackr-attendance/core#readme",
   "devDependencies": {
+    "fs-extra": "^4.0.2",
     "jest": "^21.2.1"
   },
   "dependencies": {
     "aws-sdk": "^2.146.0",
     "cognitive-services": "^0.6.0",
+    "easyimage": "^2.1.0",
     "q": "^1.5.1",
     "uuid": "^3.1.0"
   }
