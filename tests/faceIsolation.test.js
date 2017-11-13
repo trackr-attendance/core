@@ -1,4 +1,4 @@
-const faceIsolation = require('./faceIsolation');
+const faceIsolation = require('../faceIsolation');
 var fs = require('fs-extra');
 var easyimg = require('easyimage');
 
@@ -25,10 +25,10 @@ describe('simple crop boxes', () => {
 describe('get face crop arguments', () => {
 	test('face crop arguments with defaults', () => {
 		expect.assertions(1);
-		return easyimg.info('faceIsolationTest.png').then(function (image){
+		return easyimg.info('tests/faceIsolationTest.png').then(function (image){
 			var face = require('./faceIsolationTestFaces.json')[0];
 			expect(faceIsolation.getFaceCropArguments(image, face)).toEqual({
-				src: 'faceIsolationTest.png',
+				src: 'tests/faceIsolationTest.png',
 				dst: './output/01.png',
 				cropwidth: 20,
 				cropheight: 20,
@@ -41,10 +41,10 @@ describe('get face crop arguments', () => {
 
 	test('face crop arguments with explicit output directory', () => {
 		expect.assertions(1);
-		return easyimg.info('faceIsolationTest.png').then(function (image){
+		return easyimg.info('tests/faceIsolationTest.png').then(function (image){
 			var face = require('./faceIsolationTestFaces.json')[0];
 			expect(faceIsolation.getFaceCropArguments(image, face, './testOutputDirectory')).toEqual({
-				src: 'faceIsolationTest.png',
+				src: 'tests/faceIsolationTest.png',
 				dst: './testOutputDirectory/01.png',
 				cropwidth: 20,
 				cropheight: 20,
@@ -57,10 +57,10 @@ describe('get face crop arguments', () => {
 
 	test('face crop arguments with explicit scale factor', () => {
 		expect.assertions(1);
-		return easyimg.info('faceIsolationTest.png').then(function (image){
+		return easyimg.info('tests/faceIsolationTest.png').then(function (image){
 			var face = require('./faceIsolationTestFaces.json')[0];
 			expect(faceIsolation.getFaceCropArguments(image, face, null, 3)).toEqual({
-				src: 'faceIsolationTest.png',
+				src: 'tests/faceIsolationTest.png',
 				dst: './output/01.png',
 				cropwidth: 25,
 				cropheight: 25,
@@ -73,10 +73,10 @@ describe('get face crop arguments', () => {
 
 	test('face crop arguments with explicit output directory and scale factor', () => {
 		expect.assertions(1);
-		return easyimg.info('faceIsolationTest.png').then(function (image){
+		return easyimg.info('tests/faceIsolationTest.png').then(function (image){
 			var face = require('./faceIsolationTestFaces.json')[0];
 			expect(faceIsolation.getFaceCropArguments(image, face, './testOutputDirectory', 3)).toEqual({
-				src: 'faceIsolationTest.png',
+				src: 'tests/faceIsolationTest.png',
 				dst: './testOutputDirectory/01.png',
 				cropwidth: 25,
 				cropheight: 25,
@@ -101,7 +101,7 @@ describe('face isolation test', () => {
 
 	test('generate individual face photos', () => {
 		expect.assertions(1);
-		return faceIsolation.generateIndividualFacePhotos('faceIsolationTest.png', require('./faceIsolationTestFaces.json')).then(function(data){
+		return faceIsolation.generateIndividualFacePhotos('tests/faceIsolationTest.png', require('./faceIsolationTestFaces.json')).then(function(data){
 			expect(data).toEqual(require('./faceIsolationTestFacesResult.json'));
 		});
 	});
