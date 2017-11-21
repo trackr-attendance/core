@@ -1,3 +1,4 @@
+var video = require('./video');
 var upload = require('./upload');
 var faces = require('./faces');
 var faceIsolation = require('./faceIsolation');
