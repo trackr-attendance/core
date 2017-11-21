@@ -1,24 +1,18 @@
 var Q = require('q');
-var config = require('./config.js');
-var AWS = require('aws-sdk');
-AWS.config.region = config.region;
 var fs = require('fs-extra');
+var AWS = require('aws-sdk');
+
+var config = require('./config.js');
+AWS.config.region = config.region;
 var rekognition = new AWS.Rekognition({region: config.region});
 
-const dir = './parsed'; //location of parsed faces *** update for S3 location ***
-var filenames = fs.readdirSync(dir); //read file names
-
-var name = null
-var bitmap = fs.readFileSync("./parsed/" + filenames[1] );
-
-
-function match(face) { //match face to name
+exports.match = function (file) { //match face to name
     var deferred = Q.defer();
     rekognition.searchFacesByImage({
         "CollectionId": config.collectionName,
         "FaceMatchThreshold": 70,
         "Image": { 
-            "Bytes": face,
+            "Bytes": fs.readFileSync(file),
         },
         "MaxFaces": 1
     }, function(err, data) {
@@ -27,24 +21,22 @@ function match(face) { //match face to name
         } else {
             if(data.FaceMatches && data.FaceMatches.length > 0 && data.FaceMatches[0].Face)
             {
-                deferred.resolve({
-                    key:   "Name",
-                    value: data.FaceMatches[0].Face.ExternalImageId
-                });
+                deferred.resolve({name: data.FaceMatches[0].Face.ExternalImageId});
             } else {
                 deferred.reject(new Error("Not recognized"));
             }
         }
-    });    
+    });
     return deferred.promise;
 }
 
-function emotion(face){ //calculate emotion score
+exports.engagement = function (face){ //calculate emotion score
     var deferred = Q.defer();
+
     rekognition.detectFaces({
         "Attributes": ["ALL"],
         "Image": { 
-            "Bytes": face,
+            "Bytes": fs.readFileSync(file),
         },
     }, function(err, data) {
         if (err) {
@@ -68,14 +60,7 @@ function emotion(face){ //calculate emotion score
                 //bonus for head up
                 score += data.FaceDetails[0].Pose.Pitch / 100;
                 
-                deferred.resolve({
-                    key:   "Engagement",
-                    value: score
-                });
-
-                //var returnValue = match(bitmap)
-                //match face, adds to dictionary, and returns updated dictionary
-
+                deferred.resolve({engagement: score});
             } 
         }
     )
@@ -86,6 +71,6 @@ match(bitmap).then(function (data){
     console.log(data);
 });
 
-emotion(bitmap).then(function (data){
+engagement(bitmap).then(function (data){
     console.log(data);
 });
