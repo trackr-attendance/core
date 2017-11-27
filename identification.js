@@ -18,7 +18,7 @@ exports.match = function (collectionName, file) {
         {
             return {name: data.FaceMatches[0].Face.ExternalImageId};
         } else {
-            return new Error("Not recognized");
+            throw new Error("Individual not recognized");
         }
     });
 }
