@@ -16,7 +16,7 @@ exports.match = function (collectionName, file) {
     }).promise().then(function(data) {
         if(data.FaceMatches && data.FaceMatches.length > 0 && data.FaceMatches[0].Face)
         {
-            return {name: data.FaceMatches[0].Face.ExternalImageId};
+            return {name: data.FaceMatches[0].Face.ExternalImageId, confidence: data.FaceMatches[0].Face.Confidence};
         } else {
             throw new Error("Individual not recognized");
         }
@@ -37,18 +37,21 @@ exports.engagement = function (file){ //calculate emotion score
             if(data.FaceDetails[0].Emotions[j].Type == "CONFUSED"){
                 score += 1/3 * data.FaceDetails[0].Emotions[j].Confidence / 100
             }
+
             //bonus for being happy
             if(data.FaceDetails[0].Emotions[j].Type == "HAPPY"){
                 score += 1/3 * data.FaceDetails[0].Emotions[j].Confidence / 100
             }
         };
+
         //bonus for eyes open
         if(data.FaceDetails[0].EyesOpen.Value == true){
             score += 1/3 * data.FaceDetails[0].EyesOpen.Confidence / 100
         };
+
         //bonus for head up
         score += data.FaceDetails[0].Pose.Pitch / 100;
         
-        return {engagement: score};
+        return {engagement: score, emotions: data.FaceDetails[0].Emotions};
     })
 };
