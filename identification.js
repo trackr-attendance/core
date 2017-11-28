@@ -4,6 +4,64 @@ var fs = require('fs-extra');
 var AWS = require('aws-sdk');
 AWS.config.loadFromPath('./awsConfig.json');
 
+// Firebase Configuration
+var admin = require("firebase-admin");
+
+exports.makePersonReference = function (externalImageId){
+    fbRef = externalImageId.split('-');
+
+    // Clean Up Course Number
+    fbRef[1] = fbRef[1].replace('.','');
+
+    // Add in Roster / Students Tree
+    person = fbRef.splice(-3, 3, 'roster', 'students')
+
+    // Add Person Index "Id's" are 1 off from Array Index in Firebase
+    fbRef.push(person[0]-1);
+
+    // Add Global Root
+    fbRef.unshift('courses');
+
+    return {
+        ref: fbRef.join('/'),
+        first: person[1],
+        last: person[2]
+    };
+}
+
+exports.getPerson = function(externalImageId){
+    ref = exports.makePersonReference(externalImageId);
+
+    var closeFirebase = false;
+    if (admin.apps.length === 0) {
+        // default to new instance if not set
+        admin.initializeApp({
+            credential: admin.credential.cert(require("./trackr-attendance-d70b149c2ccc.json")),
+            databaseURL: "https://trackr-attendance.firebaseio.com"
+        });
+        closeFirebase = true;
+    }
+
+    db = admin.database();
+
+    return db.ref(ref.ref).once('value').then(function(snapshot) {
+        // Close One Off Firebase Connection
+        if (closeFirebase) {
+            admin.app().delete()
+        }
+
+        // Match First Name
+        if (ref.first.toLowerCase() == snapshot.val().first.replace(/[^a-zA-Z0-9_.]/,'').toLowerCase()){
+            // Match Last Name
+            if (ref.last.toLowerCase() == snapshot.val().last.replace(/[^a-zA-Z0-9_.]/,'').toLowerCase()){
+                return snapshot.val();
+            }else{
+                throw new Error("Couldn't find matching person");
+            }
+        }
+    });
+}
+
 exports.match = function (collectionName, file) {
 	var rekognition = new AWS.Rekognition();
     return rekognition.searchFacesByImage({
