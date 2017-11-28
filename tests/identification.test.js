@@ -1,5 +1,6 @@
 var identify = require('../identification');
 var admin = require("firebase-admin");
+var fs = require('fs-extra');
 
 collection = 'MIT-1.125-2017';
 
@@ -26,8 +27,17 @@ describe('identify faces', () => {
 		expect.assertions(1);
 		return expect(identify.match(collection, 'tests/identification.unknownFace.jpg')).rejects.toHaveProperty('message','Individual not recognized');
 	});
+	test('providing bytestream instead of path', () => {
+		expect.assertions(1);
+		file = fs.readFileSync('tests/identification.knownFace.jpg');
+		return identify.match(collection, file).then(function (data){
+			expect(data).toEqual(expect.objectContaining({
+				name: 'MIT-1.125-2017-13-Aramael-PenaAlcantara',
+				confidence: expect.any(Number)
+			}));
+		});
+	});
 });
-
 describe('engagement scores', () => {
 	test('engaged individual', () => {
 		expect.assertions(1);
@@ -40,6 +50,15 @@ describe('engagement scores', () => {
 	test('unengaged individual', () => {
 		expect.assertions(1);
 		return identify.engagement('tests/identification.unengagedFace.jpg').then(function (data){
+			expect(data).toEqual(expect.objectContaining({
+				engagement: expect.any(Number)
+			}));
+		});
+	});
+	test('providing bytestream instead of path', () => {
+		expect.assertions(1);
+		file = fs.readFileSync('tests/identification.trainedFace.jpg');
+		return identify.engagement(file).then(function (data){
 			expect(data).toEqual(expect.objectContaining({
 				engagement: expect.any(Number)
 			}));
@@ -80,5 +99,48 @@ describe('person database lookup', () => {
 			last: expect.any(String),
 			username: expect.any(String)
 		}));
+	});
+});
+describe('person identification', () => {
+	test.only('identify person not in training set but of known individual', () => {
+		expect.assertions(1);
+		return identify.person(collection, 'tests/identification.knownFace.jpg').then(function (data){
+			expect(data).toEqual(expect.objectContaining({
+				id: expect.any(Number),
+				first: expect.any(String),
+				last: expect.any(String),
+				username: expect.any(String),
+				confidence: expect.any(Number)
+			}));
+		});
+	});
+});
+describe('person identification', () => {
+	test('identify person photo not in training set but of known individual', () => {
+		expect.assertions(1);
+		return identify.person(collection, 'tests/identification.knownFace.jpg').then(function (data){
+			expect(data).toEqual(expect.objectContaining({
+				id: expect.any(Number),
+				first: expect.any(String),
+				last: expect.any(String),
+				username: expect.any(String),
+				confidence: expect.any(Number)
+			}));
+		});
+	});
+});
+describe('person identification & engagement score', () => {
+	test('identify and quantify engagement of person photo not in training set but of known individual', () => {
+		expect.assertions(1);
+		return identify.all(collection, 'tests/identification.knownFace.jpg').then(function (data){
+			expect(data).toEqual(expect.objectContaining({
+				id: expect.any(Number),
+				first: expect.any(String),
+				last: expect.any(String),
+				username: expect.any(String),
+				confidence: expect.any(Number),
+				engagement: expect.any(Number)
+			}));
+		});
 	});
 });

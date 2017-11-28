@@ -1,4 +1,6 @@
 var fs = require('fs-extra');
+var Q = require('q');
+var merge = require('deepmerge')
 
 // AWS Configuration
 var AWS = require('aws-sdk');
@@ -64,11 +66,12 @@ exports.getPerson = function(externalImageId){
 
 exports.match = function (collectionName, file) {
 	var rekognition = new AWS.Rekognition();
+    var file = (typeof file == "object")? file : fs.readFileSync(file);
     return rekognition.searchFacesByImage({
         "CollectionId": collectionName,
         "FaceMatchThreshold": 70,
         "Image": { 
-            "Bytes": fs.readFileSync(file),
+            "Bytes": file,
         },
         "MaxFaces": 1
     }).promise().then(function(data) {
@@ -81,12 +84,22 @@ exports.match = function (collectionName, file) {
     });
 }
 
+exports.person = function (collection, file){
+    return exports.match(collection, file).then(function (face){
+        return exports.getPerson(face.name).then(function (person) {
+            person.confidence = face.confidence;
+            return person;
+        });
+    });
+}
+
 exports.engagement = function (file){ //calculate emotion score
     var rekognition = new AWS.Rekognition();
+    var file = (typeof file == "object")? file : fs.readFileSync(file);
     return rekognition.detectFaces({
         "Attributes": ["ALL"],
         "Image": { 
-            "Bytes": fs.readFileSync(file),
+            "Bytes": file,
         },
     }).promise().then(function(data) {
         var score = 0;
@@ -113,3 +126,12 @@ exports.engagement = function (file){ //calculate emotion score
         return {engagement: score, emotions: data.FaceDetails[0].Emotions};
     })
 };
+
+exports.all = function (collection, file){
+    return Q.all([
+        exports.person(collection, file),
+        exports.engagement(file)
+    ]).then(function (data){
+        return merge.all(data);
+    });
+}
