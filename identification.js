@@ -129,7 +129,7 @@ exports.engagement = function (file){ //calculate emotion score
     })
 };
 
-exports.all = function (collection, file){
+exports.attendance = function (collection, file){
     var file = (typeof file == "object")? file : fs.readFileSync(file);
     return Q.all([
         exports.person(collection, file),
@@ -138,3 +138,4 @@ exports.all = function (collection, file){
         return merge.all(data);
     });
 }
+
