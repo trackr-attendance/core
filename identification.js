@@ -32,7 +32,7 @@ exports.makePersonReference = function (externalImageId){
 }
 
 exports.getPerson = function(externalImageId){
-    ref = exports.makePersonReference(externalImageId);
+    var ref = exports.makePersonReference(externalImageId);
 
     var closeFirebase = false;
     if (admin.apps.length === 0) {
@@ -44,7 +44,7 @@ exports.getPerson = function(externalImageId){
         closeFirebase = true;
     }
 
-    db = admin.database();
+    var db = admin.database();
 
     return db.ref(ref.ref).once('value').then(function(snapshot) {
         // Close One Off Firebase Connection
@@ -58,8 +58,10 @@ exports.getPerson = function(externalImageId){
             if (ref.last.toLowerCase() == snapshot.val().last.replace(/[^a-zA-Z0-9_.]/,'').toLowerCase()){
                 return snapshot.val();
             }else{
-                throw new Error("Couldn't find matching person");
+                throw new Error("Couldn't find matching person with first name <" + ref.first + "> and last name <" + ref.last + ">");
             }
+        }else{
+            throw new Error("Couldn't find matching person with first name <" + ref.first + ">");
         }
     });
 }
@@ -127,7 +129,8 @@ exports.engagement = function (file){ //calculate emotion score
     })
 };
 
-exports.all = function (collection, file){
+exports.attendance = function (collection, file){
+    var file = (typeof file == "object")? file : fs.readFileSync(file);
     return Q.all([
         exports.person(collection, file),
         exports.engagement(file)
@@ -135,3 +138,4 @@ exports.all = function (collection, file){
         return merge.all(data);
     });
 }
+

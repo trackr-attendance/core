@@ -102,7 +102,7 @@ describe('person database lookup', () => {
 	});
 });
 describe('person identification', () => {
-	test.only('identify person not in training set but of known individual', () => {
+	test('identify person not in training set but of known individual', () => {
 		expect.assertions(1);
 		return identify.person(collection, 'tests/identification.knownFace.jpg').then(function (data){
 			expect(data).toEqual(expect.objectContaining({
@@ -132,7 +132,7 @@ describe('person identification', () => {
 describe('person identification & engagement score', () => {
 	test('identify and quantify engagement of person photo not in training set but of known individual', () => {
 		expect.assertions(1);
-		return identify.all(collection, 'tests/identification.knownFace.jpg').then(function (data){
+		return identify.attendance(collection, 'tests/identification.knownFace.jpg').then(function (data){
 			expect(data).toEqual(expect.objectContaining({
 				id: expect.any(Number),
 				first: expect.any(String),
