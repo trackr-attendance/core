@@ -92,6 +92,8 @@ exports.person = function (collection, file){
             person.confidence = face.confidence;
             return person;
         });
+    }).catch(function(error){
+        return {message: error.message};
     });
 }
 
@@ -126,7 +128,9 @@ exports.engagement = function (file){ //calculate emotion score
         score += data.FaceDetails[0].Pose.Pitch / 100;
         
         return {engagement: score, emotions: data.FaceDetails[0].Emotions};
-    })
+    }).catch(function(error){
+        return {message: error.message};
+    });
 };
 
 exports.attendance = function (collection, file){
