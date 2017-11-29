@@ -1,4 +1,8 @@
 var attendance = require('./attendance');
+var del = require('del');
+var video = require('./video');
+var Q = require('q');
+Q.longStackSupport = true;
 
 var admin = require("firebase-admin");
 admin.initializeApp({
@@ -6,10 +10,22 @@ admin.initializeApp({
     databaseURL: "https://trackr-attendance.firebaseio.com"
 });
 
-attendance.snapshot('test001.jpg', 'MIT-1.125-2017').then(function (data){
-	console.log('data)', data);
-}).catch(function (error){
-	console.log('error)', error);
-}).fin(function () {
+video.stills('testClass.mov').then(function (filenames) {
+	return Q.all(filenames.map(function (filename) {
+		return attendance.snapshot(filename, 'MIT-1.125-2017');
+	})).then(function (data){
+		return { attendance: data , files: filenames};
+	});
+}).then(function(filenames){
+	console.log(JSON.stringify(filenames, null, 4));
+	// Delete Full Filenames
+	return del(filenames.files);
+}).catch(function (error) {
+    console.error(error);
+}).progress(function (progress) {
+	process.stdout.clearLine();
+	process.stdout.cursorTo(0);
+	process.stdout.write(' Processing ' + progress.percent + ' '+ progress.time + ' / ' + progress.duration + ' ' + progress.srcfps + ' fps');
+}).fin(function (){
 	admin.app().delete();
 });
