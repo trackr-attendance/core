@@ -13,7 +13,9 @@ exports.stills = function (movie){
     var prefix = uuidv4();
     var command = spawn('ffmpeg', ['-i', movie, '-vf', "select='not(mod(n\\,1800))'", '-vsync', 'vfr', prefix+'%04d.png', '-hide_banner']);
 
-    var progressTemplate = {}
+    var progressTemplate = {};
+    var creationDate = '';
+    var creationLocation = '';
 	command.stderr.on('data', function (data) {
 		if (data.toString().indexOf('Duration:') !== -1){
 			var match = data.toString().match(/([\d.]+) fps/i);
@@ -25,6 +27,18 @@ exports.stills = function (movie){
 			if (match){
 				progressTemplate.duration = match[1].substring(0, match[1].indexOf("."))+':00';
 				progressTemplate.durationSec = timecodes.toSeconds(progressTemplate.duration, progressTemplate.srcfps);
+			}
+		}
+		if (data.toString().indexOf('com.apple.quicktime.creationdate') !== -1){
+			var match = data.toString().match(/creationdate: ([\d-:T]+)/i);
+			if (match){
+				creationDate = new Date(match[1]);
+			}
+		}
+		if (data.toString().indexOf('com.apple.quicktime.location.ISO6709') !== -1){
+			var match = data.toString().match(/ISO6709: ([\+\d-\:\.\/]+)/i);
+			if (match){
+				creationLocation = match[1];
 			}
 		}
 		if (data.toString().indexOf('frame=') !== -1){
@@ -51,7 +65,7 @@ exports.stills = function (movie){
 				filter: item => item.path.indexOf(prefix) > 0 && path.extname(item.path) === '.png',
 				noRecurseOnFailedFilter: true
 			}).map(file => file.path);
-			deferred.resolve(files);
+			deferred.resolve({files: files, date: creationDate, location: creationLocation});
 		} else {
 			deferred.reject(new Error('child process exited with code ' + code.toString()));			
 		}

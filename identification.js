@@ -1,6 +1,6 @@
 var fs = require('fs-extra');
 var Q = require('q');
-var merge = require('deepmerge')
+var merge = require('deepmerge');
 
 // AWS Configuration
 var AWS = require('aws-sdk');
