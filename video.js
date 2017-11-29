@@ -2,11 +2,16 @@ var Q = require('q')
 var spawn  = require('child_process').spawn;
 var flatten = require('array-flatten');
 var timecodes = require('node-timecodes');
+const uuidv4 = require('uuid/v4');
+const fs = require('fs-extra')
+var klawSync = require('klaw-sync')
+const path = require('path')
 
 exports.stills = function (movie){
     var deferred = Q.defer();
 
-    command = spawn('ffmpeg', ['-i', movie, '-vf', "select='not(mod(n\\,1800))'", '-vsync', 'vfr', 'output_image%04d.png', '-hide_banner']);
+    var prefix = uuidv4();
+    var command = spawn('ffmpeg', ['-i', movie, '-vf', "select='not(mod(n\\,1800))'", '-vsync', 'vfr', prefix+'%04d.png', '-hide_banner']);
 
     var progressTemplate = {}
 	command.stderr.on('data', function (data) {
@@ -40,7 +45,13 @@ exports.stills = function (movie){
 
 	command.on('exit', function (code) {
 		if (code == 0){
-			deferred.resolve('child process exited with code ' + code.toString());
+			// Find All Generated Files
+			var files = klawSync('./', {
+				nodir: true,
+				filter: item => item.path.indexOf(prefix) > 0 && path.extname(item.path) === '.png',
+				noRecurseOnFailedFilter: true
+			}).map(file => file.path);
+			deferred.resolve(files);
 		} else {
 			deferred.reject(new Error('child process exited with code ' + code.toString()));			
 		}

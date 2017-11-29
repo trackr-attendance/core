@@ -2,13 +2,18 @@ var video = require('./video');
 var upload = require('./upload');
 var faces = require('./faces');
 var faceIsolation = require('./faceIsolation');
+var del = require('del');
 
-var file = 'test001.jpg';
-
-upload.uploadFile(file).then(function (photo){
-	faces.find(photo.Location).then(function (faces){
-		faceIsolation.generateIndividualFacePhotos(file, faces).then(function(value){
-			console.log(value);
-		});
-	});
+video.stills('testClass.mov').then(function (filenames) {
+    console.log(filenames);
+    return filenames;
+}).then(function(filenames){
+	// Delete Full Filenames
+	return del(files);
+}).catch(function (error) {
+    console.error(error);
+}).progress(function (progress) {
+	process.stdout.clearLine();
+	process.stdout.cursorTo(0);
+	process.stdout.write(' Processing ' + progress.percent + ' '+ progress.time + ' / ' + progress.duration + ' ' + progress.srcfps + ' fps');
 });

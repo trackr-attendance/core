@@ -28,7 +28,9 @@
     "array-flatten": "^2.1.1",
     "aws-sdk": "^2.146.0",
     "cognitive-services": "^0.6.0",
+    "del": "^3.0.0",
     "easyimage": "^2.1.0",
+    "klaw-sync": "^3.0.2",
     "node-timecodes": "^2.5.0",
     "q": "^1.5.1",
     "uuid": "^3.1.0"
