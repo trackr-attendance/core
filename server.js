@@ -2,6 +2,7 @@ var Q = require('q');
 var admin = require("firebase-admin");
 var attendance = require('./attendance');
 var argv = require('minimist')(process.argv.slice(2));
+var course = require("./course");
 var del = require('del');
 var fs = require('fs-extra');
 var merge = require('deepmerge');
@@ -41,10 +42,24 @@ video.stills(path.resolve(argv.video)).then(function (recording) {
 	})).then(function (data){
 		return merge.all([{attendance: data}, recording]);
 	});
+}).then (function (data){
+	return course.information(argv.class).then(function(courseInfo){
+		return merge.all([data, courseInfo]);
+	});
 }).then(function(trackr){
-	console.log(JSON.stringify(trackr, null, 4));
+	// Display Data & Write to File
+	// console.log(JSON.stringify(trackr, null, 4));
+	return fs.writeJson('./output.json', trackr, {spaces: 2}).then(function (){
+		return trackr;
+	});
+}).then(function (trackr){
+	process.stdout.clearLine();
+	process.stdout.cursorTo(0);
+	process.stdout.write('Completed. Check out trackrattendance.com for interactive statistics on your class.');
 	// Delete Full Filenames
-	return del(trackr.files);
+	return del(trackr.files).then(function (){
+		fs.emptyDir('./output');
+	});
 }).catch(function (error) {
     console.error(error);
 }).progress(function (progress) {
