@@ -1,16 +1,41 @@
 var Q = require('q');
 var admin = require("firebase-admin");
 var attendance = require('./attendance');
+var argv = require('minimist')(process.argv.slice(2));
 var del = require('del');
+var fs = require('fs-extra');
 var merge = require('deepmerge');
+var path = require('path');
 var video = require('./video');
 
+var error_res = [];
+/* Course Tag */
+if (!("class" in argv) || (typeof argv.class == 'undefined')){
+	error_res.push("<class> needs to be present");
+}
+
+/* Video File */
+if (!("video" in argv) || (typeof argv.video == 'undefined')){
+	error_res.push("<video> needs to be present");
+}else{
+	if (!fs.pathExistsSync(argv.video)){
+		error_res.push("<video> video file not found");
+	}
+}
+
+if (error_res.length !== 0){
+	console.log(error_res);
+	process.exit(1);
+}
+
+// Open Firebase Connection
 admin.initializeApp({
     credential: admin.credential.cert(require("./trackr-attendance-d70b149c2ccc.json")),
     databaseURL: "https://trackr-attendance.firebaseio.com"
 });
 
-video.stills('testClass.mov').then(function (recording) {
+// Process Video
+video.stills(path.resolve(argv.video)).then(function (recording) {
 	return Q.all(recording.files.map(function (filename) {
 		return attendance.snapshot(filename, 'MIT-1.125-2017');
 	})).then(function (data){

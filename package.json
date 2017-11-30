@@ -33,6 +33,7 @@
     "easyimage": "^2.1.0",
     "firebase-admin": "^5.5.1",
     "klaw-sync": "^3.0.2",
+    "minimist": "^1.2.0",
     "node-timecodes": "^2.5.0",
     "q": "^1.5.1",
     "uuid": "^3.1.0"
