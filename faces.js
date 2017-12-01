@@ -1,3 +1,4 @@
+var throttle = require('q-ratelimit')(6500);
 const cognitive = require('cognitive-services');
 
 exports.find = function(photo){
@@ -16,5 +17,7 @@ exports.find = function(photo){
 		'url': photo
 	};
 
-	return face.detect({parameters, headers, body});
+	return throttle().then(function (){
+		return face.detect({parameters, headers, body});
+	});
 }

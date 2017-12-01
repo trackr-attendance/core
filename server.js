@@ -55,7 +55,7 @@ video.stills(path.resolve(argv.video)).then(function (recording) {
 }).then(function (trackr){
 	process.stdout.clearLine();
 	process.stdout.cursorTo(0);
-	process.stdout.write('Completed. Check out trackrattendance.com for interactive statistics on your class.');
+	process.stdout.write('Completed. Check out trackrattendance.com for interactive statistics on your class.\n');
 	// Delete Full Filenames
 	return del(trackr.files).then(function (){
 		fs.emptyDir('./output');
