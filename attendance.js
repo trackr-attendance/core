@@ -9,7 +9,7 @@ exports.snapshot = function(file, collection){
 		return faces.find(photo.Location).then(function (faces){
 			return faceIsolation.generateIndividualFacePhotos(file, faces).then(function(photos){
 				return Q.all(photos.map(function (face) {
-					return identify.attendance(collection, face.path);
+					return identify.attendance(collection, face.path, face);
 				})).then(function (data){
 					return { attendance: data };
 				});
