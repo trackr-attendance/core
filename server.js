@@ -47,11 +47,14 @@ video.stills(path.resolve(argv.video)).then(function (recording) {
 		return merge.all([data, courseInfo]);
 	});
 }).then(function(trackr){
-	// Display Data & Write to File
-	return course.uploadAttendance(argv.class, output).then(function (){
-		// Write to File
-		return fs.writeJson('./output.json', trackr, {spaces: 2}).then(function (){
-			return trackr;
+	// Write to Attendnace to Database
+	return course.uploadAttendance(argv.class, trackr).then(function (trackr){
+		// Write to Enagement to Database
+		return course.uploadEngagement(argv.class, trackr).then(function (trackr){
+			// Write to File
+			return fs.writeJson('./output.json', trackr, {spaces: 2}).then(function (){
+				return trackr;
+			});
 		});
 	});
 }).then(function (trackr){

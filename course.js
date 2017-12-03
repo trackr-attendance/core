@@ -81,6 +81,55 @@ exports.uploadAttendance = function (externalImageId, output){
             admin.app().delete();
         }
 
-        return recognised;
+        output.recognised = recognised;
+        return output;
+    });
+}
+
+// Upload Average Engagement
+exports.uploadEngagement = function (externalImageId, output){
+    var ref = exports.makeCourseReference(externalImageId+'-engagement');
+    var date = new Date(output.date).toISOString().slice(0,10).replace(/-/g,'');
+
+    var closeFirebase = false;
+    if (admin.apps.length === 0) {
+        // default to new instance if not set
+        var serviceAccount = require("./trackr-attendance-d70b149c2ccc.json");
+        admin.initializeApp({
+          credential: admin.credential.cert(serviceAccount),
+          databaseURL: "https://trackr-attendance.firebaseio.com"
+        });
+        closeFirebase = true;
+    }
+
+    var engagement =  output.attendance.map(function(record, index){
+        return {
+            time: index + 1,
+            score: record.attendance.reduce(function (accumulator, record, index){
+                if (("engagement" in record) || (typeof record.engagement !== 'undefined')){
+                    var score = ((index)*accumulator + record.engagement)/(index+1);
+                    return score;
+                }else{
+                    if (!accumulator){
+                        return 0;
+                    }
+                    return accumulator;
+                }
+            }, 0),
+        }
+    });
+
+    var data = {};
+    data[date] = engagement;
+
+    var db = admin.database();
+    return db.ref(ref).update(data).then(function(snapshot) {
+        // Close One Off Firebase Connection
+        if (closeFirebase) {
+            admin.app().delete();
+        }
+
+        output.engagement = engagement;
+        return output;
     });
 }
