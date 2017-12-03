@@ -48,9 +48,11 @@ video.stills(path.resolve(argv.video)).then(function (recording) {
 	});
 }).then(function(trackr){
 	// Display Data & Write to File
-	// console.log(JSON.stringify(trackr, null, 4));
-	return fs.writeJson('./output.json', trackr, {spaces: 2}).then(function (){
-		return trackr;
+	return course.uploadAttendance(argv.class, output).then(function (){
+		// Write to File
+		return fs.writeJson('./output.json', trackr, {spaces: 2}).then(function (){
+			return trackr;
+		});
 	});
 }).then(function (trackr){
 	process.stdout.clearLine();

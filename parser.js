@@ -1,20 +1,5 @@
 var output = require('./output.json');
 
-var simpleAttendance = output.attendance.map(function (snapshot) {
-	return snapshot.attendance.map(function (student){
-		if (!("id" in student) || (typeof student.id == 'undefined')){
-			return -1;
-		}else {
-			return Number(student.id);
-		}
-	});
-});
-
-// Quick Recognition
-var recognised = new Set([].concat.apply([], simpleAttendance));
-recognised.delete(-1);
-recognised = Array.from(recognised).sort();
-
 //compile avg engagements from each frame
 var engagement =  output.attendance.map(function(record, index){
 	return {
@@ -33,4 +18,4 @@ var engagement =  output.attendance.map(function(record, index){
 	}
 });
 
-console.log(recognised, engagement);
+console.log(engagement);
