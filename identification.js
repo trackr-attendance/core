@@ -133,12 +133,13 @@ exports.engagement = function (file){ //calculate emotion score
     });
 };
 
-exports.attendance = function (collection, file){
+exports.attendance = function (collection, file, info){
     var file = (typeof file == "object")? file : fs.readFileSync(file);
     return Q.all([
         exports.person(collection, file),
         exports.engagement(file)
     ]).then(function (data){
+        data.push(info);
         return merge.all(data);
     });
 }
