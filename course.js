@@ -21,7 +21,7 @@ exports.information = function(externalImageId){
     var closeFirebase = false;
     if (admin.apps.length === 0) {
         // default to new instance if not set
-        var serviceAccount = require("./trackr-attendance-d70b149c2ccc.json");
+        var serviceAccount = require("./trackrAttendanceFirebaseConfig.json");
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
           databaseURL: "https://trackr-attendance.firebaseio.com"
@@ -48,7 +48,7 @@ exports.uploadAttendance = function (externalImageId, output){
     var closeFirebase = false;
     if (admin.apps.length === 0) {
         // default to new instance if not set
-        var serviceAccount = require("./trackr-attendance-d70b149c2ccc.json");
+        var serviceAccount = require("./trackrAttendanceFirebaseConfig.json");
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
           databaseURL: "https://trackr-attendance.firebaseio.com"
@@ -94,7 +94,7 @@ exports.uploadEngagement = function (externalImageId, output){
     var closeFirebase = false;
     if (admin.apps.length === 0) {
         // default to new instance if not set
-        var serviceAccount = require("./trackr-attendance-d70b149c2ccc.json");
+        var serviceAccount = require("./trackrAttendanceFirebaseConfig.json");
         admin.initializeApp({
           credential: admin.credential.cert(serviceAccount),
           databaseURL: "https://trackr-attendance.firebaseio.com"

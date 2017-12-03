@@ -68,7 +68,7 @@ describe('engagement scores', () => {
 describe('generate connection database lookup for person', () => {
 	beforeAll(() => {
 		admin.initializeApp({
-		    credential: admin.credential.cert(require("../trackr-attendance-d70b149c2ccc.json")),
+		    credential: admin.credential.cert(require("../trackrAttendanceFirebaseConfig.json")),
 		    databaseURL: "https://trackr-attendance.firebaseio.com"
 		}); // default to new instance if not set
 	});

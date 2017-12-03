@@ -38,7 +38,7 @@ exports.getPerson = function(externalImageId){
     if (admin.apps.length === 0) {
         // default to new instance if not set
         admin.initializeApp({
-            credential: admin.credential.cert(require("./trackr-attendance-d70b149c2ccc.json")),
+            credential: admin.credential.cert(require("./trackrAttendanceFirebaseConfig.json")),
             databaseURL: "https://trackr-attendance.firebaseio.com"
         });
         closeFirebase = true;
