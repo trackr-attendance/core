@@ -1,5 +1,6 @@
-// Firebase Configuration
 var admin = require("firebase-admin");
+var rp = require('request-promise');
+var BLOCKCHAIN_URL = 'http://blockchain.trackrattendance.com/mineBlock';
 
 // Function to get path to class name in Firebase
 exports.makeCourseReference = function (externalImageId){
@@ -83,6 +84,24 @@ exports.uploadAttendance = function (externalImageId, output){
 
         output.recognised = recognised;
         return output;
+    }).then(function(output){
+        var message = {
+            "type": 1,
+            "class": externalImageId,
+            "date": output.date,
+            "location": output.location,
+            "attendance": recognised
+        };
+        return rp({
+            method: 'POST',
+            uri: BLOCKCHAIN_URL,
+            body: {
+                data: message,
+            },
+            json: true
+        }).then(function (parsedBody) {
+            return output;
+        });
     });
 }
 
@@ -131,5 +150,23 @@ exports.uploadEngagement = function (externalImageId, output){
 
         output.engagement = engagement;
         return output;
+    }).then(function(output){
+        var message = {
+            "type": 2,
+            "class": externalImageId,
+            "date": output.date,
+            "location": output.location,
+            "engagement": engagement
+        };
+        return rp({
+            method: 'POST',
+            uri: BLOCKCHAIN_URL,
+            body: {
+                data: message,
+            },
+            json: true
+        }).then(function (parsedBody) {
+            return output;
+        });
     });
 }
